@@ -2,56 +2,72 @@ import { useState, useEffect } from 'react';
 import { bookService } from '../services/bookService';
 import { memberService } from '../services/memberService';
 import { borrowingService } from '../services/borrowingService';
-import { formatDate, formatCurrency, isOverdue } from '../lib/utils';
-import { BOOK_CATEGORIES } from '../lib/constants';
+import { formatDate, formatCurrency, isOverdue, addDays, toInputDateFormat } from '../lib/utils';
+import { BOOK_CATEGORIES, BORROWING_PERIOD, FINE_PER_DAY } from '../lib/constants';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import Modal from '../components/ui/Modal';
 import Loader from '../components/ui/Loader';
+import Input from '../components/ui/Input';
+import Select from '../components/ui/Select';
 import {
   BookOpen,
   Search,
   BookCheck,
   CheckCircle,
   AlertCircle,
-  UserCheck,
-  RotateCcw
+  User,
+  CreditCard,
+  RotateCcw,
+  Sparkles,
+  Calendar,
+  Check
 } from 'lucide-react';
 
 export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
   const [books, setBooks] = useState([]);
-  const [members, setMembers] = useState([]);
-  const [selectedMember, setSelectedMember] = useState(null);
   const [memberLoans, setMemberLoans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
 
+  // Student Profile / Account State (Remembered locally for easy booking)
+  const [studentInfo, setStudentInfo] = useState(() => {
+    return {
+      name: localStorage.getItem('librax_student_name') || 'Shiva Bhalke',
+      usn: localStorage.getItem('librax_student_usn') || 'USN-2024-001',
+      department: localStorage.getItem('librax_student_dept') || 'Computer Science',
+      year: '3rd Year',
+      email: 'student@campus.edu'
+    };
+  });
+
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
-  const [confirmBook, setConfirmBook] = useState(null);
+  const [bookingBook, setBookingBook] = useState(null);
   const [returningLoan, setReturningLoan] = useState(null);
   const [notice, setNotice] = useState(null);
 
+  // Checkout modal form state
+  const [checkoutData, setCheckoutData] = useState({
+    name: studentInfo.name,
+    usn: studentInfo.usn,
+    department: studentInfo.department,
+    paymentMethod: 'Campus ID Quota (Free)',
+    depositAmount: 50,
+    issueDate: toInputDateFormat(new Date()),
+    dueDate: addDays(new Date(), BORROWING_PERIOD)
+  });
+
   const showNotice = (type, message) => {
     setNotice({ type, message });
-    setTimeout(() => setNotice(null), 5000);
+    setTimeout(() => setNotice(null), 6000);
   };
 
   const loadPortalData = async () => {
     setLoading(true);
     try {
-      const [allBooks, allMembers] = await Promise.all([
-        bookService.getBooks(),
-        memberService.getMembers()
-      ]);
+      const allBooks = await bookService.getBooks();
       setBooks(allBooks);
-      setMembers(allMembers);
-
-      // Default select the first active member if none selected
-      if (!selectedMember && allMembers.length > 0) {
-        const firstActive = allMembers.find((m) => m.status === 'Active') || allMembers[0];
-        setSelectedMember(firstActive);
-      }
     } catch (err) {
       console.error('Portal load error:', err);
     } finally {
@@ -59,44 +75,103 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
     }
   };
 
-  const loadMemberLoans = async (memberId) => {
-    if (!memberId) return;
+  const loadStudentLoans = async (usn) => {
+    if (!usn) return;
     try {
       const allBorrowings = await borrowingService.getAllBorrowings();
-      const myLoans = allBorrowings.filter((b) => b.member_id === memberId && !b.returned_at);
+      const myLoans = allBorrowings.filter(
+        (b) => b.members?.member_code?.toLowerCase() === usn.toLowerCase() && !b.returned_at
+      );
       setMemberLoans(myLoans);
     } catch (err) {
-      console.error('Error loading member loans:', err);
+      console.error('Error loading loans:', err);
     }
   };
 
   useEffect(() => {
     loadPortalData();
+    loadStudentLoans(studentInfo.usn);
   }, []);
 
-  useEffect(() => {
-    if (selectedMember) {
-      loadMemberLoans(selectedMember.id);
-    }
-  }, [selectedMember]);
+  // Open booking modal
+  const handleOpenBooking = (book) => {
+    setBookingBook(book);
+    setCheckoutData({
+      name: studentInfo.name,
+      usn: studentInfo.usn,
+      department: studentInfo.department,
+      paymentMethod: 'Campus ID Quota (Free)',
+      depositAmount: 50,
+      issueDate: toInputDateFormat(new Date()),
+      dueDate: addDays(new Date(), BORROWING_PERIOD)
+    });
+  };
 
-  const handleBookBorrow = async () => {
-    if (!confirmBook || !selectedMember) return;
+  // Submit booking & payment form
+  const handleConfirmBooking = async (e) => {
+    e.preventDefault();
+    if (!bookingBook) return;
+
+    if (!checkoutData.name.trim()) {
+      showNotice('error', 'Please enter your Full Name.');
+      return;
+    }
+    if (!checkoutData.usn.trim()) {
+      showNotice('error', 'Please enter your College USN / SRN.');
+      return;
+    }
+
     setActionLoading(true);
     try {
+      // 1. Save student credentials locally for convenient subsequent bookings
+      localStorage.setItem('librax_student_name', checkoutData.name);
+      localStorage.setItem('librax_student_usn', checkoutData.usn);
+      localStorage.setItem('librax_student_dept', checkoutData.department);
+      setStudentInfo((prev) => ({
+        ...prev,
+        name: checkoutData.name,
+        usn: checkoutData.usn,
+        department: checkoutData.department
+      }));
+
+      // 2. Check or create Member record for this USN/SRN
+      const allMembers = await memberService.getMembers();
+      let targetMember = allMembers.find(
+        (m) => m.member_code?.toLowerCase() === checkoutData.usn.trim().toLowerCase()
+      );
+
+      if (!targetMember) {
+        targetMember = await memberService.createMember({
+          member_code: checkoutData.usn.trim().toUpperCase(),
+          name: checkoutData.name.trim(),
+          email: `${checkoutData.usn.trim().toLowerCase()}@campus.edu`,
+          department: checkoutData.department,
+          year: '3rd Year',
+          status: 'Active'
+        });
+      }
+
+      // 3. Issue the book
       await borrowingService.issueBook({
-        book_id: confirmBook.id,
-        member_id: selectedMember.id
+        book_id: bookingBook.id,
+        member_id: targetMember.id,
+        issued_at: checkoutData.issueDate,
+        due_date: checkoutData.dueDate
       });
-      setConfirmBook(null);
-      showNotice('success', `"${confirmBook.title}" successfully booked and borrowed!`);
+
+      setBookingBook(null);
+      showNotice(
+        'success',
+        `🎉 Successfully Booked! "${bookingBook.title}" reserved for ${checkoutData.name} (${checkoutData.usn}). Due on ${formatDate(checkoutData.dueDate)}.`
+      );
+
+      // 4. Refresh catalog & member loans
       await Promise.all([
         loadPortalData(),
-        loadMemberLoans(selectedMember.id)
+        loadStudentLoans(checkoutData.usn)
       ]);
     } catch (err) {
-      showNotice('error', err.message || 'Unable to book title.');
-      setConfirmBook(null);
+      showNotice('error', err.message || 'Unable to complete book reservation.');
     } finally {
       setActionLoading(false);
     }
@@ -109,13 +184,13 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
       const res = await borrowingService.returnBook(returningLoan.id);
       setReturningLoan(null);
       if (res.isLate) {
-        showNotice('success', `Book returned! Overdue fee of ${formatCurrency(res.fine)} applied.`);
+        showNotice('success', `Book returned! Overdue fine of ${formatCurrency(res.fine)} settled.`);
       } else {
-        showNotice('success', 'Book returned on time! Thank you.');
+        showNotice('success', 'Book returned on time! 1 copy restored to library catalog.');
       }
       await Promise.all([
         loadPortalData(),
-        loadMemberLoans(selectedMember.id)
+        loadStudentLoans(studentInfo.usn)
       ]);
     } catch (err) {
       showNotice('error', err.message || 'Error returning book.');
@@ -136,13 +211,13 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
   });
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem 0' }}>
-      {/* Top Banner / Student Selector */}
+    <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '1rem 0' }}>
+      {/* Top Banner / Student Navigation Header */}
       <div style={{
-        backgroundColor: 'var(--bg-surface)',
+        backgroundColor: '#ffffff',
         borderRadius: 'var(--radius-lg)',
         border: '1px solid var(--border-light)',
-        padding: '1.25rem 1.5rem',
+        padding: '1.25rem 1.75rem',
         marginBottom: '1.5rem',
         boxShadow: 'var(--shadow-sm)',
         display: 'flex',
@@ -151,46 +226,38 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
         flexWrap: 'wrap',
         gap: '1rem'
       }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-main)' }}>
-              🎓 Student &amp; Patron Portal
-            </span>
-            <Badge variant="info">Self-Service</Badge>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
+          <div style={{
+            width: '42px',
+            height: '42px',
+            borderRadius: '10px',
+            backgroundColor: 'var(--color-primary)',
+            color: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <BookOpen size={22} />
           </div>
-          <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-            Browse library catalog titles, book reservations, and check your loan due dates
-          </p>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                Student Library &amp; Booking Portal
+              </span>
+              <Badge variant="info">Self-Service</Badge>
+            </div>
+            <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+              Logged in student: <strong>{studentInfo.name}</strong> (USN: <code>{studentInfo.usn}</code> &bull; {studentInfo.department})
+            </p>
+          </div>
         </div>
 
-        {/* Member Selector */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <UserCheck size={16} color="var(--color-primary)" />
-            <span style={{ fontSize: '0.8125rem', fontWeight: '600' }}>Active Patron:</span>
-            <select
-              className="form-select"
-              style={{ width: 'auto', minWidth: '220px', padding: '0.4rem 0.75rem' }}
-              value={selectedMember?.id || ''}
-              onChange={(e) => {
-                const found = members.find((m) => m.id === e.target.value);
-                setSelectedMember(found);
-              }}
-            >
-              {members.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.name} ({m.member_code}) - {m.status}
-                </option>
-              ))}
-            </select>
-          </div>
-
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           {onBackToHome && (
             <Button variant="secondary" size="sm" onClick={onBackToHome}>
               Home
             </Button>
           )}
-
           <Button variant="primary" size="sm" onClick={onSwitchToAdmin}>
             Admin / Librarian
           </Button>
@@ -204,19 +271,19 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
         </div>
       )}
 
-      {/* Grid: My Loans (Left) & Book Catalog (Right) */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
+      {/* Grid: Active Student Loans (Left) & Student Account Summary (Right) */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', marginBottom: '1.75rem' }}>
         {/* My Current Borrowings */}
         <div className="card">
           <div className="card-header">
             <h3 className="card-title">
-              📚 My Borrowed Books ({memberLoans.length})
+              📚 My Active Loans ({memberLoans.length})
             </h3>
           </div>
 
           {memberLoans.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '2rem 1rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-              You currently have no borrowed books. Choose a title from the catalog to book one!
+              No books currently checked out. Click <strong>"Book / Reserve"</strong> on any catalog title below!
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -240,7 +307,7 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
                       <div style={{ fontWeight: '600', color: 'var(--text-main)', fontSize: '0.875rem' }}>
                         {loan.books?.title}
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
                         Due Date: <strong style={{ color: late ? 'var(--color-danger)' : 'var(--text-main)' }}>{formatDate(loan.due_date)}</strong>
                         {late && <span style={{ color: 'var(--color-danger)', fontWeight: '700', marginLeft: '0.5rem' }}>(OVERDUE)</span>}
                       </div>
@@ -261,38 +328,59 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
           )}
         </div>
 
-        {/* Member Status Summary */}
+        {/* Student Library Account Summary Card */}
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Patron Profile Status</h3>
+            <h3 className="card-title">💳 Student Account &amp; Card</h3>
           </div>
-          {selectedMember ? (
-            <div style={{ fontSize: '0.875rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <div><strong>Name:</strong> {selectedMember.name}</div>
-              <div><strong>Member ID:</strong> <code>{selectedMember.member_code}</code></div>
-              <div><strong>Department:</strong> {selectedMember.department || 'General'}</div>
-              <div><strong>Academic Year:</strong> {selectedMember.year || 'N/A'}</div>
+          <div style={{
+            backgroundColor: 'var(--bg-subtle)',
+            borderRadius: 'var(--radius-md)',
+            padding: '1rem',
+            border: '1px solid var(--border-light)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
               <div>
-                <strong>Borrowing Privilege: </strong>
-                <Badge variant={selectedMember.status === 'Active' ? 'success' : 'danger'}>
-                  {selectedMember.status === 'Active' ? 'Eligible to Borrow' : 'Blocked (Inactive)'}
-                </Badge>
+                <div style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-main)' }}>
+                  {studentInfo.name}
+                </div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  College USN/SRN: <code>{studentInfo.usn}</code>
+                </div>
+              </div>
+              <Badge variant="success">Active Patron</Badge>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.8125rem', borderTop: '1px solid var(--border-light)', paddingTop: '0.75rem' }}>
+              <div>
+                <span style={{ color: 'var(--text-muted)' }}>Department:</span>
+                <div style={{ fontWeight: '600' }}>{studentInfo.department}</div>
+              </div>
+              <div>
+                <span style={{ color: 'var(--text-muted)' }}>Standard Loan:</span>
+                <div style={{ fontWeight: '600' }}>{BORROWING_PERIOD} Days</div>
+              </div>
+              <div>
+                <span style={{ color: 'var(--text-muted)' }}>Overdue Rate:</span>
+                <div style={{ fontWeight: '600' }}>{formatCurrency(FINE_PER_DAY)}/day</div>
+              </div>
+              <div>
+                <span style={{ color: 'var(--text-muted)' }}>Borrow Quota:</span>
+                <div style={{ fontWeight: '600', color: 'var(--color-success)' }}>Available</div>
               </div>
             </div>
-          ) : (
-            <p style={{ color: 'var(--text-muted)' }}>No member profile selected.</p>
-          )}
+          </div>
         </div>
       </div>
 
-      {/* Catalog Search & Filters */}
+      {/* Catalog Search & Filter Bar */}
       <div className="filter-bar">
         <div className="filter-search" style={{ position: 'relative' }}>
           <input
             type="text"
             className="form-input"
             style={{ paddingLeft: '2.25rem' }}
-            placeholder="Search book title, author, or ISBN..."
+            placeholder="Search catalog by title, author, or ISBN..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -325,7 +413,7 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
 
       {/* Catalog Cards Grid */}
       {loading ? (
-        <Loader text="Loading library catalog..." />
+        <Loader text="Loading library book catalog..." />
       ) : (
         <div style={{
           display: 'grid',
@@ -341,8 +429,7 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  transition: 'transform 0.15s ease'
+                  justifyContent: 'space-between'
                 }}
               >
                 <div>
@@ -377,10 +464,10 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
                     variant={hasCopies ? 'primary' : 'secondary'}
                     size="sm"
                     icon={BookCheck}
-                    disabled={!hasCopies || selectedMember?.status !== 'Active'}
-                    onClick={() => setConfirmBook(book)}
+                    disabled={!hasCopies}
+                    onClick={() => handleOpenBooking(book)}
                   >
-                    {hasCopies ? 'Book / Borrow' : 'Unavailable'}
+                    {hasCopies ? 'Book / Reserve' : 'Unavailable'}
                   </Button>
                 </div>
               </div>
@@ -389,43 +476,126 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
         </div>
       )}
 
-      {/* Modal: Confirm Borrow */}
+      {/* MODAL: Student Booking, USN, Pricing & Payment Checkout Form */}
       <Modal
-        isOpen={Boolean(confirmBook)}
-        onClose={() => setConfirmBook(null)}
-        title="Confirm Book Reservation"
-        maxWidth="460px"
+        isOpen={Boolean(bookingBook)}
+        onClose={() => setBookingBook(null)}
+        title="Student Book Reservation & Checkout"
+        maxWidth="520px"
       >
-        <div style={{ marginBottom: '1.25rem', fontSize: '0.875rem' }}>
-          <p>You are booking:</p>
+        <form onSubmit={handleConfirmBooking}>
+          {/* Selected Book Overview */}
           <div style={{
             backgroundColor: 'var(--bg-subtle)',
-            padding: '0.875rem',
             borderRadius: 'var(--radius-md)',
-            margin: '0.75rem 0',
+            padding: '0.875rem',
+            marginBottom: '1rem',
             border: '1px solid var(--border-light)'
           }}>
-            <div style={{ fontWeight: '600', color: 'var(--text-main)' }}>{confirmBook?.title}</div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>by {confirmBook?.author}</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              Selected Library Title
+            </div>
+            <div style={{ fontWeight: '700', color: 'var(--text-main)', fontSize: '1rem', marginTop: '0.2rem' }}>
+              {bookingBook?.title}
+            </div>
+            <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+              by {bookingBook?.author} &bull; Category: {bookingBook?.category}
+            </div>
           </div>
-          <p style={{ color: 'var(--text-body)' }}>
-            Patron: <strong>{selectedMember?.name}</strong> (<code>{selectedMember?.member_code}</code>)
-          </p>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-            Standard loan period: 14 days. Book copies will automatically decrease by 1 upon booking.
-          </p>
-        </div>
-        <div className="modal-footer" style={{ margin: '1.25rem -1.5rem -1.5rem -1.5rem' }}>
-          <Button variant="secondary" onClick={() => setConfirmBook(null)} disabled={actionLoading}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleBookBorrow} loading={actionLoading} icon={BookCheck}>
-            Confirm &amp; Borrow Book
-          </Button>
-        </div>
+
+          {/* Student Account Details Inputs */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <Input
+              label="Student Full Name"
+              placeholder="e.g. Shiva Bhalke"
+              required
+              value={checkoutData.name}
+              onChange={(e) => setCheckoutData({ ...checkoutData, name: e.target.value })}
+            />
+            <Input
+              label="College USN / SRN"
+              placeholder="e.g. 1RV21CS042"
+              required
+              value={checkoutData.usn}
+              onChange={(e) => setCheckoutData({ ...checkoutData, usn: e.target.value })}
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <Select
+              label="Department / Branch"
+              value={checkoutData.department}
+              onChange={(e) => setCheckoutData({ ...checkoutData, department: e.target.value })}
+              options={[
+                'Computer Science',
+                'Information Science',
+                'Electronics & Communication',
+                'Data Science & AI',
+                'Mechanical Engineering',
+                'Business Administration'
+              ]}
+            />
+            <Input
+              label="Return Due Date"
+              type="date"
+              value={checkoutData.dueDate}
+              onChange={(e) => setCheckoutData({ ...checkoutData, dueDate: e.target.value })}
+              hint={`Loan Period: ${BORROWING_PERIOD} Days`}
+            />
+          </div>
+
+          {/* Pricing & Account Bill Breakdown */}
+          <div style={{
+            backgroundColor: '#f0fdf4',
+            border: '1px solid #bbf7d0',
+            borderRadius: 'var(--radius-md)',
+            padding: '0.875rem',
+            marginTop: '0.5rem',
+            marginBottom: '1rem'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+              <span style={{ fontSize: '0.8125rem', color: '#166534', fontWeight: '500' }}>Borrowing Fee:</span>
+              <span style={{ fontSize: '0.8125rem', fontWeight: '700', color: '#166534' }}>FREE (Student ID)</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+              <span style={{ fontSize: '0.8125rem', color: '#166534', fontWeight: '500' }}>Security Deposit:</span>
+              <span style={{ fontSize: '0.8125rem', fontWeight: '700', color: '#166534' }}>₹0.00</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #bbf7d0', paddingTop: '0.35rem', marginTop: '0.35rem' }}>
+              <span style={{ fontSize: '0.875rem', fontWeight: '700', color: '#15803d' }}>Total Payable Now:</span>
+              <span style={{ fontSize: '1.1rem', fontWeight: '800', color: '#15803d' }}>₹0.00</span>
+            </div>
+          </div>
+
+          {/* Payment / Validation Option */}
+          <Select
+            label="Payment & Validation Method"
+            value={checkoutData.paymentMethod}
+            onChange={(e) => setCheckoutData({ ...checkoutData, paymentMethod: e.target.value })}
+            options={[
+              'Campus ID Quota (Free)',
+              'Pay at Library Desk (Cash / UPI)',
+              'Campus Wallet / ID Card'
+            ]}
+          />
+
+          <div className="modal-footer" style={{ margin: '1.25rem -1.5rem -1.5rem -1.5rem' }}>
+            <Button variant="secondary" onClick={() => setBookingBook(null)} disabled={actionLoading}>
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              type="submit"
+              loading={actionLoading}
+              icon={BookCheck}
+            >
+              Pay ₹0 &amp; Confirm Booking
+            </Button>
+          </div>
+        </form>
       </Modal>
 
-      {/* Modal: Confirm Return */}
+      {/* MODAL: Return Confirmation */}
       <Modal
         isOpen={Boolean(returningLoan)}
         onClose={() => setReturningLoan(null)}
@@ -433,9 +603,9 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
         maxWidth="440px"
       >
         <div style={{ marginBottom: '1.25rem', fontSize: '0.875rem' }}>
-          <p>Return <strong>{returningLoan?.books?.title}</strong> to library stock?</p>
+          <p>Return <strong>{returningLoan?.books?.title}</strong> back to library inventory?</p>
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-            This will mark your loan as returned and restore 1 copy back to the catalog.
+            Available catalog copies will increment by 1.
           </p>
         </div>
         <div className="modal-footer" style={{ margin: '1.25rem -1.5rem -1.5rem -1.5rem' }}>
