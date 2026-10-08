@@ -40,8 +40,6 @@ export default function Books() {
       await addBook(formData);
       setIsAddModalOpen(false);
       showNotice('success', 'Book added successfully.');
-    } catch (err) {
-      throw err;
     } finally {
       setActionLoading(false);
     }
@@ -54,8 +52,6 @@ export default function Books() {
       await editBook(editingBook.id, formData);
       setEditingBook(null);
       showNotice('success', 'Book updated successfully.');
-    } catch (err) {
-      throw err;
     } finally {
       setActionLoading(false);
     }

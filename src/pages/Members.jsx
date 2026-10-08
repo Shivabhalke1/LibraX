@@ -38,8 +38,6 @@ export default function Members() {
       await addMember(formData);
       setIsAddModalOpen(false);
       showNotice('success', 'Member registered successfully.');
-    } catch (err) {
-      throw err;
     } finally {
       setActionLoading(false);
     }
@@ -52,8 +50,6 @@ export default function Members() {
       await editMember(editingMember.id, formData);
       setEditingMember(null);
       showNotice('success', 'Member updated successfully.');
-    } catch (err) {
-      throw err;
     } finally {
       setActionLoading(false);
     }

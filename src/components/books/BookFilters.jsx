@@ -1,4 +1,4 @@
-import { Search, Filter, RotateCcw } from 'lucide-react';
+import { Search, RotateCcw } from 'lucide-react';
 import { BOOK_CATEGORIES } from '../../lib/constants';
 
 export default function BookFilters({

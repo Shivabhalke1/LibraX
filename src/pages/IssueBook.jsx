@@ -29,8 +29,6 @@ export default function IssueBook({ onNavigate }) {
     try {
       await issueNewBook(formData);
       showNotice('success', 'Book issued successfully! Copy count has been updated.');
-    } catch (err) {
-      throw err;
     } finally {
       setActionLoading(false);
     }

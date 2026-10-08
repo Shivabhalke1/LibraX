@@ -1,8 +1,7 @@
 import Button from '../ui/Button';
-import Badge from '../ui/Badge';
 import { formatDate, formatCurrency } from '../../lib/utils';
 import { FINE_PER_DAY } from '../../lib/constants';
-import { RotateCcw, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import { RotateCcw, AlertTriangle, CheckCircle } from 'lucide-react';
 
 export default function ReturnBookModal({
   borrowing,

@@ -1,4 +1,4 @@
-import { BookOpen, TrendingUp, BarChart3 } from 'lucide-react';
+import { TrendingUp, BarChart3 } from 'lucide-react';
 
 export default function BorrowingChart({ stats = {} }) {
   const total = stats.totalCopies || 1;

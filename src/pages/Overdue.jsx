@@ -8,7 +8,7 @@ import { AlertTriangle, DollarSign, Calendar, CheckCircle, AlertCircle } from 'l
 import { FINE_PER_DAY } from '../lib/constants';
 import { formatCurrency } from '../lib/utils';
 
-export default function Overdue({ onNavigate }) {
+export default function Overdue({ _onNavigate }) {
   const {
     borrowings,
     loading,

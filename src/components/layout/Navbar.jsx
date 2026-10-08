@@ -1,4 +1,4 @@
-import { Menu, LogOut, User, ShieldCheck } from 'lucide-react';
+import { Menu, LogOut, User } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 export default function Navbar({

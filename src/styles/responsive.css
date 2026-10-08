@@ -107,6 +107,10 @@
 
 /* Tablet & Mobile adjustments */
 @media (max-width: 1024px) {
+  .mobile-close-btn {
+    display: flex !important;
+  }
+
   .sidebar {
     position: fixed;
     top: 0;

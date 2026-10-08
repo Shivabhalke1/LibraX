@@ -5,6 +5,8 @@ import Button from '../ui/Button';
 import { BOOK_CATEGORIES } from '../../lib/constants';
 import { AlertCircle } from 'lucide-react';
 
+const currentYear = new Date().getFullYear();
+
 export default function BookForm({
   initialData = null,
   onSubmit,
@@ -17,7 +19,7 @@ export default function BookForm({
     isbn: '',
     category: BOOK_CATEGORIES[0],
     publisher: '',
-    publication_year: new Date().getFullYear(),
+    publication_year: currentYear,
     total_copies: 1
   });
   const [error, setError] = useState('');
@@ -128,7 +130,7 @@ export default function BookForm({
           label="Publication Year"
           type="number"
           min="1000"
-          max={new Date().getFullYear() + 1}
+          max={currentYear + 1}
           value={formData.publication_year}
           onChange={(e) => handleChange('publication_year', e.target.value)}
         />

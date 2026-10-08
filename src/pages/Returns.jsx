@@ -3,7 +3,7 @@ import { useBorrowings } from '../hooks/useBorrowings';
 import BorrowingTable from '../components/borrowings/BorrowingTable';
 import ReturnBookModal from '../components/borrowings/ReturnBook';
 import Modal from '../components/ui/Modal';
-import { Search, RotateCcw, CheckCircle, AlertCircle } from 'lucide-react';
+import { Search, CheckCircle, AlertCircle } from 'lucide-react';
 import { formatCurrency } from '../lib/utils';
 
 export default function Returns() {

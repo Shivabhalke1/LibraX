@@ -3,7 +3,7 @@ import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import { formatDate, formatCurrency } from '../../lib/utils';
 import { BORROWING_STATUS } from '../../lib/constants';
-import { RotateCcw, AlertTriangle } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
 
 export default function BorrowingTable({
   borrowings = [],
