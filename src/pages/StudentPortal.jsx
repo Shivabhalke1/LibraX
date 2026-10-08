@@ -26,7 +26,8 @@ import {
   LogOut,
   ChevronRight,
   ShieldCheck,
-  Check
+  Check,
+  BookCheck
 } from 'lucide-react';
 
 export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
