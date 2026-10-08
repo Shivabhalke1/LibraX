@@ -51,7 +51,7 @@ function MainApp() {
     }
     if (currentPage === 'student-portal') {
       return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', padding: '1rem' }}>
+        <div className="student-portal-wrapper">
           <StudentPortal
             onSwitchToAdmin={() => handleNavigate('login')}
             onBackToHome={() => handleNavigate('home')}
@@ -80,7 +80,7 @@ function MainApp() {
 
   if (currentPage === 'student-portal') {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', padding: '1rem' }}>
+      <div className="student-portal-wrapper">
         <StudentPortal
           onSwitchToAdmin={() => handleNavigate('dashboard')}
           onBackToHome={() => handleNavigate('home')}

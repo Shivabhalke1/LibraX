@@ -54,7 +54,7 @@ export default function Navbar({
             <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>
               {profile?.name || user?.email?.split('@')[0] || 'Librarian'}
             </span>
-            <span style={{ marginLeft: '0.375rem', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+            <span className="topbar-user-role" style={{ marginLeft: '0.375rem', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
               ({profile?.role || 'Admin'})
             </span>
           </div>

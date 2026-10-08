@@ -352,38 +352,27 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
   };
 
   return (
-    <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '1rem', fontFamily: "'Inter', sans-serif" }}>
+    <div className="portal-container">
       {/* Top Header Bar */}
-      <header style={{
-        backgroundColor: '#ffffff',
-        borderRadius: 'var(--radius-lg)',
-        border: '1px solid var(--border-light)',
-        padding: '1rem 1.5rem',
-        marginBottom: '1.5rem',
-        boxShadow: 'var(--shadow-sm)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '1rem'
-      }}>
+      <header className="portal-header">
         {/* Brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div className="portal-brand">
           <div style={{
-            width: '40px',
-            height: '40px',
+            width: '38px',
+            height: '38px',
             borderRadius: '10px',
             backgroundColor: '#1e3a8a',
             color: '#ffffff',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            flexShrink: 0
           }}>
             <GraduationCap size={22} />
           </div>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1.3rem', fontWeight: '800', color: '#0f172a' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <span className="portal-brand-title">
                 Libra<span style={{ color: '#2563eb' }}>X</span> Student Portal
               </span>
               <Badge variant="info">Patron Edition</Badge>
@@ -395,7 +384,7 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
         </div>
 
         {/* Right Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div className="portal-header-actions">
           {/* Cart Button */}
           <button
             type="button"
@@ -404,24 +393,24 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.5rem',
-              padding: '0.55rem 1rem',
+              padding: '0.5rem 0.875rem',
               borderRadius: '8px',
               backgroundColor: cart.length > 0 ? '#eff6ff' : '#ffffff',
               border: '1px solid ' + (cart.length > 0 ? '#93c5fd' : '#e2e8f0'),
               color: cart.length > 0 ? '#1d4ed8' : '#334155',
-              fontSize: '0.875rem',
+              fontSize: '0.85rem',
               fontWeight: '600',
               cursor: 'pointer',
               position: 'relative'
             }}
           >
-            <ShoppingCart size={18} />
+            <ShoppingCart size={17} />
             <span>Cart</span>
             {cart.length > 0 && (
               <span style={{
                 backgroundColor: '#2563eb',
                 color: '#ffffff',
-                fontSize: '0.75rem',
+                fontSize: '0.72rem',
                 padding: '0.1rem 0.45rem',
                 borderRadius: '9999px',
                 fontWeight: '700'
@@ -436,21 +425,24 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.625rem',
+              gap: '0.5rem',
               backgroundColor: '#f1f5f9',
-              padding: '0.35rem 0.75rem',
+              padding: '0.35rem 0.65rem',
               borderRadius: '9999px',
-              fontSize: '0.8125rem'
+              fontSize: '0.78rem',
+              maxWidth: '100%'
             }}>
-              <User size={15} color="#2563eb" />
-              <span><strong>{student.name}</strong> ({student.usn})</span>
+              <User size={14} color="#2563eb" style={{ flexShrink: 0 }} />
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <strong>{student.name}</strong> ({student.usn})
+              </span>
               <button
                 type="button"
                 onClick={handleStudentLogout}
                 style={{ background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer', padding: '0.2rem' }}
                 title="Log out student"
               >
-                <LogOut size={14} />
+                <LogOut size={13} />
               </button>
             </div>
           ) : (
@@ -466,7 +458,7 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
           )}
 
           <Button variant="secondary" size="sm" onClick={onSwitchToAdmin} icon={ShieldCheck}>
-            Librarian Admin
+            Admin
           </Button>
         </div>
       </header>
@@ -479,55 +471,31 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
         </div>
       )}
 
-      {/* Portal Navigation Tabs */}
-      <div style={{
-        display: 'flex',
-        gap: '0.5rem',
-        borderBottom: '2px solid #e2e8f0',
-        marginBottom: '1.5rem',
-        overflowX: 'auto'
-      }}>
+      {/* Portal Navigation Tabs - Touch-friendly Horizontal Scroll */}
+      <div className="portal-tabs-nav">
         <button
           type="button"
           onClick={() => setActiveTab('catalog')}
+          className="portal-tab-btn"
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.75rem 1.25rem',
-            background: 'none',
-            border: 'none',
             borderBottom: activeTab === 'catalog' ? '3px solid #2563eb' : '3px solid transparent',
-            color: activeTab === 'catalog' ? '#2563eb' : '#64748b',
-            fontWeight: activeTab === 'catalog' ? '700' : '500',
-            fontSize: '0.95rem',
-            cursor: 'pointer',
-            marginBottom: '-2px'
+            color: activeTab === 'catalog' ? '#2563eb' : '#64748b'
           }}
         >
-          <BookOpen size={18} />
+          <BookOpen size={17} />
           <span>Catalog &amp; Books</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('loans')}
+          className="portal-tab-btn"
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.75rem 1.25rem',
-            background: 'none',
-            border: 'none',
             borderBottom: activeTab === 'loans' ? '3px solid #2563eb' : '3px solid transparent',
-            color: activeTab === 'loans' ? '#2563eb' : '#64748b',
-            fontWeight: activeTab === 'loans' ? '700' : '500',
-            fontSize: '0.95rem',
-            cursor: 'pointer',
-            marginBottom: '-2px'
+            color: activeTab === 'loans' ? '#2563eb' : '#64748b'
           }}
         >
-          <Clock size={18} />
+          <Clock size={17} />
           <span>My Active Loans</span>
           {activeLoans.length > 0 && (
             <Badge variant="warning">{activeLoans.length}</Badge>
@@ -537,22 +505,13 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
         <button
           type="button"
           onClick={() => setActiveTab('history')}
+          className="portal-tab-btn"
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.75rem 1.25rem',
-            background: 'none',
-            border: 'none',
             borderBottom: activeTab === 'history' ? '3px solid #2563eb' : '3px solid transparent',
-            color: activeTab === 'history' ? '#2563eb' : '#64748b',
-            fontWeight: activeTab === 'history' ? '700' : '500',
-            fontSize: '0.95rem',
-            cursor: 'pointer',
-            marginBottom: '-2px'
+            color: activeTab === 'history' ? '#2563eb' : '#64748b'
           }}
         >
-          <History size={18} />
+          <History size={17} />
           <span>Borrowing History</span>
         </button>
 
@@ -560,23 +519,14 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
           <button
             type="button"
             onClick={() => setActiveTab('auth')}
+            className="portal-tab-btn"
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.75rem 1.25rem',
-              background: 'none',
-              border: 'none',
               borderBottom: activeTab === 'auth' ? '3px solid #2563eb' : '3px solid transparent',
               color: activeTab === 'auth' ? '#2563eb' : '#64748b',
-              fontWeight: activeTab === 'auth' ? '700' : '500',
-              fontSize: '0.95rem',
-              cursor: 'pointer',
-              marginBottom: '-2px',
               marginLeft: 'auto'
             }}
           >
-            <User size={18} />
+            <User size={17} />
             <span>Student Account</span>
           </button>
         )}
@@ -629,11 +579,7 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
           {loadingBooks ? (
             <Loader text="Loading library book catalog..." />
           ) : (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-              gap: '1.25rem'
-            }}>
+            <div className="portal-book-grid">
               {filteredBooks.map((book) => {
                 const hasCopies = book.available_copies > 0;
                 const inCart = cart.some((c) => c.id === book.id);
@@ -750,19 +696,13 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
                 return (
                   <div
                     key={loan.id}
+                    className="portal-loan-item"
                     style={{
-                      padding: '1.25rem',
-                      borderRadius: '12px',
                       backgroundColor: isLate ? '#fef2f2' : '#f8fafc',
-                      border: '1px solid ' + (isLate ? '#fecaca' : '#e2e8f0'),
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      flexWrap: 'wrap',
-                      gap: '1rem'
+                      border: '1px solid ' + (isLate ? '#fecaca' : '#e2e8f0')
                     }}
                   >
-                    <div style={{ minWidth: '240px' }}>
+                    <div>
                       <div style={{ fontWeight: '700', color: 'var(--text-main)', fontSize: '1rem' }}>
                         {loan.books?.title}
                       </div>
@@ -774,9 +714,9 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
                       </div>
                     </div>
 
-                    {/* Time Period Status */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ textAlign: 'right' }}>
+                    {/* Time Period Status & Actions */}
+                    <div className="portal-loan-actions">
+                      <div>
                         <Badge variant={isLate ? 'danger' : timeInfo.warning ? 'warning' : 'success'}>
                           {timeInfo.text}
                         </Badge>
@@ -833,7 +773,7 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
               No completed loan records yet. Books you return will be archived here.
             </div>
           ) : (
-            <div style={{ overflowX: 'auto' }}>
+            <div className="table-responsive">
               <table className="app-table">
                 <thead>
                   <tr>
@@ -1130,7 +1070,7 @@ export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
           {/* Loan Duration & Due Date */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
             gap: '0.75rem',
             backgroundColor: '#f8fafc',
             border: '1px solid #e2e8f0',

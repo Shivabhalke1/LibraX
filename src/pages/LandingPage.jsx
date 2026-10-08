@@ -50,58 +50,51 @@ export default function LandingPage({ onGoToAdmin, onGoToStudent }) {
       <header style={{
         backgroundColor: '#ffffff',
         borderBottom: '1px solid #e2e8f0',
-        padding: '1rem 2rem',
+        padding: '0.875rem 1rem',
         position: 'sticky',
         top: 0,
         zIndex: 50,
         boxShadow: '0 1px 3px 0 rgba(15, 23, 42, 0.05)'
       }}>
-        <div style={{
-          maxWidth: '1280px',
-          margin: '0 auto',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '1rem'
-        }}>
+        <div className="landing-header-inner">
           {/* Brand Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
             <div style={{
-              width: '40px',
-              height: '40px',
+              width: '38px',
+              height: '38px',
               borderRadius: '10px',
               backgroundColor: '#1e3a8a',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#ffffff',
-              boxShadow: '0 4px 6px -1px rgba(30, 58, 138, 0.3)'
+              boxShadow: '0 4px 6px -1px rgba(30, 58, 138, 0.3)',
+              flexShrink: 0
             }}>
-              <BookOpen size={22} />
+              <BookOpen size={20} />
             </div>
             <div>
-              <span style={{ fontSize: '1.35rem', fontWeight: '800', letterSpacing: '-0.02em', color: '#0f172a' }}>
+              <span style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.02em', color: '#0f172a' }}>
                 Libra<span style={{ color: '#2563eb' }}>X</span>
               </span>
-              <span style={{ fontSize: '0.7rem', color: '#64748b', display: 'block', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <span style={{ fontSize: '0.68rem', color: '#64748b', display: 'block', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Online Library System
               </span>
             </div>
           </div>
 
           {/* Quick Action Buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
             <button
               type="button"
               onClick={onGoToStudent}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.55rem 1.15rem',
+                gap: '0.4rem',
+                padding: '0.5rem 0.875rem',
                 borderRadius: '8px',
-                fontSize: '0.875rem',
+                fontSize: '0.8125rem',
                 fontWeight: '600',
                 backgroundColor: '#eff6ff',
                 color: '#1d4ed8',
@@ -112,7 +105,7 @@ export default function LandingPage({ onGoToAdmin, onGoToStudent }) {
               onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dbeafe'; }}
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#eff6ff'; }}
             >
-              <GraduationCap size={16} />
+              <GraduationCap size={15} />
               <span>Student Portal</span>
             </button>
 
@@ -122,10 +115,10 @@ export default function LandingPage({ onGoToAdmin, onGoToStudent }) {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.55rem 1.25rem',
+                gap: '0.4rem',
+                padding: '0.5rem 0.875rem',
                 borderRadius: '8px',
-                fontSize: '0.875rem',
+                fontSize: '0.8125rem',
                 fontWeight: '600',
                 backgroundColor: '#1e3a8a',
                 color: '#ffffff',
@@ -137,21 +130,15 @@ export default function LandingPage({ onGoToAdmin, onGoToStudent }) {
               onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#1d4ed8'; }}
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1e3a8a'; }}
             >
-              <ShieldCheck size={16} />
-              <span>Admin / Librarian</span>
+              <ShieldCheck size={15} />
+              <span>Librarian Admin</span>
             </button>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section style={{
-        padding: '4.5rem 1.5rem 3.5rem 1.5rem',
-        maxWidth: '1200px',
-        margin: '0 auto',
-        textAlign: 'center',
-        flex: 1
-      }}>
+      <section className="landing-hero-container">
         {/* Modern Pill Badge */}
         <div style={{
           display: 'inline-flex',
@@ -164,7 +151,7 @@ export default function LandingPage({ onGoToAdmin, onGoToStudent }) {
           fontSize: '0.8125rem',
           fontWeight: '600',
           color: '#1e40af',
-          marginBottom: '1.75rem'
+          marginBottom: '1.5rem'
         }}>
           <Sparkles size={15} color="#2563eb" />
           <span>Next-Generation Automated Library Platform</span>
@@ -172,10 +159,10 @@ export default function LandingPage({ onGoToAdmin, onGoToStudent }) {
 
         {/* Hero Title */}
         <h1 style={{
-          fontSize: 'clamp(2.2rem, 5vw, 3.75rem)',
+          fontSize: 'clamp(1.9rem, 5vw, 3.75rem)',
           fontWeight: '800',
           letterSpacing: '-0.03em',
-          lineHeight: '1.15',
+          lineHeight: '1.2',
           color: '#0f172a',
           maxWidth: '880px',
           margin: '0 auto 1.25rem auto'
@@ -189,10 +176,10 @@ export default function LandingPage({ onGoToAdmin, onGoToStudent }) {
 
         {/* Hero Subtitle */}
         <p style={{
-          fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+          fontSize: 'clamp(0.95rem, 2vw, 1.2rem)',
           color: '#475569',
           maxWidth: '720px',
-          margin: '0 auto 2.5rem auto',
+          margin: '0 auto 2.25rem auto',
           lineHeight: '1.6'
         }}>
           Automated real-time inventory tracking, 1-click student book reservations,
@@ -200,31 +187,24 @@ export default function LandingPage({ onGoToAdmin, onGoToStudent }) {
         </p>
 
         {/* Cool Dual Action Buttons */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexWrap: 'wrap',
-          gap: '1.25rem',
-          marginBottom: '3.5rem'
-        }}>
+        <div className="landing-cta-container">
           {/* Student Portal Card Button */}
           <button
             type="button"
             onClick={onGoToStudent}
+            className="landing-cta-card"
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.875rem',
-              padding: '1rem 1.75rem',
+              padding: '1rem 1.5rem',
               borderRadius: '12px',
               backgroundColor: '#ffffff',
               border: '2px solid #2563eb',
               boxShadow: '0 10px 15px -3px rgba(37, 99, 235, 0.1)',
               cursor: 'pointer',
               textAlign: 'left',
-              transition: 'all 0.2s ease',
-              minWidth: '270px'
+              transition: 'all 0.2s ease'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-2px)';
@@ -243,7 +223,8 @@ export default function LandingPage({ onGoToAdmin, onGoToStudent }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#2563eb'
+              color: '#2563eb',
+              flexShrink: 0
             }}>
               <GraduationCap size={24} />
             </div>
@@ -261,11 +242,12 @@ export default function LandingPage({ onGoToAdmin, onGoToStudent }) {
           <button
             type="button"
             onClick={onGoToAdmin}
+            className="landing-cta-card"
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.875rem',
-              padding: '1rem 1.75rem',
+              padding: '1rem 1.5rem',
               borderRadius: '12px',
               backgroundColor: '#1e3a8a',
               border: '2px solid #1e3a8a',
@@ -273,7 +255,6 @@ export default function LandingPage({ onGoToAdmin, onGoToStudent }) {
               cursor: 'pointer',
               textAlign: 'left',
               transition: 'all 0.2s ease',
-              minWidth: '270px',
               color: '#ffffff'
             }}
             onMouseEnter={(e) => {
@@ -293,7 +274,8 @@ export default function LandingPage({ onGoToAdmin, onGoToStudent }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#ffffff'
+              color: '#ffffff',
+              flexShrink: 0
             }}>
               <ShieldCheck size={24} />
             </div>
@@ -309,37 +291,32 @@ export default function LandingPage({ onGoToAdmin, onGoToStudent }) {
         </div>
 
         {/* Live Metrics Preview Bar */}
-        <div style={{
+        <div className="landing-stats-container" style={{
           backgroundColor: '#ffffff',
           borderRadius: '16px',
           border: '1px solid #e2e8f0',
-          padding: '1.5rem 2rem',
-          maxWidth: '900px',
-          margin: '0 auto 4rem auto',
+          padding: '1.25rem 1.5rem',
           boxShadow: '0 4px 6px -1px rgba(15, 23, 42, 0.05)',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '1.5rem',
           textAlign: 'center'
         }}>
-          <div>
-            <div style={{ fontSize: '2rem', fontWeight: '800', color: '#1e3a8a' }}>
+          <div style={{ padding: '0.5rem' }}>
+            <div style={{ fontSize: '1.75rem', fontWeight: '800', color: '#1e3a8a' }}>
               {stats.totalBooks} Titles
             </div>
             <div style={{ fontSize: '0.8125rem', color: '#64748b', fontWeight: '500', marginTop: '0.25rem' }}>
               Catalog Inventory
             </div>
           </div>
-          <div style={{ borderLeft: '1px solid #f1f5f9', borderRight: '1px solid #f1f5f9' }}>
-            <div style={{ fontSize: '2rem', fontWeight: '800', color: '#166534' }}>
+          <div style={{ padding: '0.5rem' }}>
+            <div style={{ fontSize: '1.75rem', fontWeight: '800', color: '#166534' }}>
               {stats.availableCopies} Copies
             </div>
             <div style={{ fontSize: '0.8125rem', color: '#64748b', fontWeight: '500', marginTop: '0.25rem' }}>
               Available for Loan
             </div>
           </div>
-          <div>
-            <div style={{ fontSize: '2rem', fontWeight: '800', color: '#2563eb' }}>
+          <div style={{ padding: '0.5rem' }}>
+            <div style={{ fontSize: '1.75rem', fontWeight: '800', color: '#2563eb' }}>
               {stats.totalMembers} Members
             </div>
             <div style={{ fontSize: '0.8125rem', color: '#64748b', fontWeight: '500', marginTop: '0.25rem' }}>
@@ -349,10 +326,7 @@ export default function LandingPage({ onGoToAdmin, onGoToStudent }) {
         </div>
 
         {/* Core Capabilities Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '1.5rem',
+        <div className="landing-features-container" style={{
           maxWidth: '1100px',
           margin: '0 auto',
           textAlign: 'left'

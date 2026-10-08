@@ -137,6 +137,14 @@
 }
 
 @media (max-width: 640px) {
+  .topbar {
+    padding: 0 0.875rem;
+  }
+
+  .topbar-user-role {
+    display: none;
+  }
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
@@ -161,5 +169,264 @@
 
   .modal-content {
     max-height: 95vh;
+    padding: 0.25rem;
+    margin: 0.5rem;
   }
 }
+
+/* =========================================================================
+   Mobile Optimization: Student Portal & Landing Page Utilities
+   ========================================================================= */
+
+/* Portal Container */
+.portal-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0.5rem;
+  font-family: 'Inter', sans-serif;
+}
+
+@media (min-width: 640px) {
+  .portal-container {
+    padding: 1rem;
+  }
+}
+
+/* Portal Header */
+.portal-header {
+  background-color: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  .portal-header {
+    padding: 1.15rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.portal-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.portal-brand-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+@media (min-width: 640px) {
+  .portal-brand-title {
+    font-size: 1.3rem;
+  }
+}
+
+.portal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .portal-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .portal-header-actions .btn {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.65rem;
+  }
+}
+
+/* Tabs Navigation - Touch-friendly Horizontal Scroll */
+.portal-tabs-nav {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 2px;
+}
+
+.portal-tabs-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.portal-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.95rem;
+  background: none;
+  border: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s ease;
+}
+
+@media (min-width: 640px) {
+  .portal-tab-btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Book Catalog Grid */
+.portal-book-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 580px) {
+  .portal-book-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+/* Active Loans Cards */
+.portal-loan-item {
+  padding: 1rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+@media (min-width: 640px) {
+  .portal-loan-item {
+    padding: 1.25rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.portal-loan-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .portal-loan-actions {
+    width: auto;
+    justify-content: flex-end;
+  }
+}
+
+/* Table Horizontal Scrolling Wrapper */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-md);
+}
+
+/* Landing Page Mobile Utilities */
+.landing-header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.landing-hero-container {
+  padding: 2.75rem 1rem 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  flex: 1;
+}
+
+@media (min-width: 640px) {
+  .landing-hero-container {
+    padding: 4.5rem 1.5rem 3.5rem 1.5rem;
+  }
+}
+
+.landing-cta-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (min-width: 640px) {
+  .landing-cta-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-bottom: 3.5rem;
+  }
+}
+
+.landing-cta-card {
+  width: 100%;
+  max-width: 380px;
+}
+
+@media (min-width: 640px) {
+  .landing-cta-card {
+    width: auto;
+    min-width: 270px;
+  }
+}
+
+.landing-stats-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  max-width: 900px;
+  margin: 0 auto 3rem auto;
+}
+
+@media (min-width: 600px) {
+  .landing-stats-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 4rem;
+  }
+}
+
+.landing-features-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .landing-features-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
