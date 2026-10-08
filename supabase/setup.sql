@@ -138,27 +138,27 @@ on conflict (isbn) do nothing;
 -- Insert Sample Members
 insert into public.members (id, member_code, name, email, phone, department, year, status)
 values
-  ('m1111111-1111-1111-1111-111111111111', 'MEM-2024-001', 'Aarav Sharma', 'aarav.sharma@campus.edu', '+91 98765 43210', 'Computer Science', '3rd Year', 'Active'),
-  ('m2222222-2222-2222-2222-222222222222', 'MEM-2024-002', 'Priya Patel', 'priya.patel@campus.edu', '+91 98765 43211', 'Information Technology', '4th Year', 'Active'),
-  ('m3333333-3333-3333-3333-333333333333', 'MEM-2024-003', 'Rohan Verma', 'rohan.verma@campus.edu', '+91 98765 43212', 'Electronics & Comm', '2nd Year', 'Active'),
-  ('m4444444-4444-4444-4444-444444444444', 'MEM-2024-004', 'Ananya Gupta', 'ananya.gupta@campus.edu', '+91 98765 43213', 'Data Science', '1st Year', 'Inactive')
+  ('a1111111-1111-1111-1111-111111111111', 'MEM-2024-001', 'Aarav Sharma', 'aarav.sharma@campus.edu', '+91 98765 43210', 'Computer Science', '3rd Year', 'Active'),
+  ('a2222222-2222-2222-2222-222222222222', 'MEM-2024-002', 'Priya Patel', 'priya.patel@campus.edu', '+91 98765 43211', 'Information Technology', '4th Year', 'Active'),
+  ('a3333333-3333-3333-3333-333333333333', 'MEM-2024-003', 'Rohan Verma', 'rohan.verma@campus.edu', '+91 98765 43212', 'Electronics & Comm', '2nd Year', 'Active'),
+  ('a4444444-4444-4444-4444-444444444444', 'MEM-2024-004', 'Ananya Gupta', 'ananya.gupta@campus.edu', '+91 98765 43213', 'Data Science', '1st Year', 'Inactive')
 on conflict (member_code) do nothing;
 
 -- Insert Sample Borrowings
 -- 1. Active Loan (Due in 7 days)
 insert into public.borrowings (id, book_id, member_id, issued_at, due_date, returned_at, status)
 values
-  ('c1111111-1111-1111-1111-111111111111', 'b1111111-1111-1111-1111-111111111111', 'm1111111-1111-1111-1111-111111111111', now() - interval '7 days', (current_date + interval '7 days')::date, null, 'Active')
+  ('c1111111-1111-1111-1111-111111111111', 'b1111111-1111-1111-1111-111111111111', 'a1111111-1111-1111-1111-111111111111', now() - interval '7 days', (current_date + interval '7 days')::date, null, 'Active')
 on conflict (id) do nothing;
 
 -- 2. Overdue Loan (Issued 20 days ago, due 6 days ago -> Overdue!)
 insert into public.borrowings (id, book_id, member_id, issued_at, due_date, returned_at, status)
 values
-  ('c2222222-2222-2222-2222-222222222222', 'b2222222-2222-2222-2222-222222222222', 'm2222222-2222-2222-2222-222222222222', now() - interval '20 days', (current_date - interval '6 days')::date, null, 'Active')
+  ('c2222222-2222-2222-2222-222222222222', 'b2222222-2222-2222-2222-222222222222', 'a2222222-2222-2222-2222-222222222222', now() - interval '20 days', (current_date - interval '6 days')::date, null, 'Active')
 on conflict (id) do nothing;
 
 -- 3. Returned Loan
 insert into public.borrowings (id, book_id, member_id, issued_at, due_date, returned_at, status)
 values
-  ('c3333333-3333-3333-3333-333333333333', 'b3333333-3333-3333-3333-333333333333', 'm3333333-3333-3333-3333-333333333333', now() - interval '14 days', (current_date - interval '1 day')::date, now() - interval '2 days', 'Returned')
+  ('c3333333-3333-3333-3333-333333333333', 'b3333333-3333-3333-3333-333333333333', 'a3333333-3333-3333-3333-333333333333', now() - interval '14 days', (current_date - interval '1 day')::date, now() - interval '2 days', 'Returned')
 on conflict (id) do nothing;
