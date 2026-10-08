@@ -18,7 +18,7 @@ import {
   RotateCcw
 } from 'lucide-react';
 
-export default function StudentPortal({ onSwitchToAdmin }) {
+export default function StudentPortal({ onSwitchToAdmin, onBackToHome }) {
   const [books, setBooks] = useState([]);
   const [members, setMembers] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null);
@@ -185,8 +185,14 @@ export default function StudentPortal({ onSwitchToAdmin }) {
             </select>
           </div>
 
-          <Button variant="secondary" size="sm" onClick={onSwitchToAdmin}>
-            Back to Admin Dashboard
+          {onBackToHome && (
+            <Button variant="secondary" size="sm" onClick={onBackToHome}>
+              Home
+            </Button>
+          )}
+
+          <Button variant="primary" size="sm" onClick={onSwitchToAdmin}>
+            Admin / Librarian
           </Button>
         </div>
       </div>

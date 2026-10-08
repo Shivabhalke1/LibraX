@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { BookOpen, Lock, Mail, User, AlertCircle, CheckCircle } from 'lucide-react';
 
-export default function Login() {
+export default function Login({ onBackToHome }) {
   const { login, register, isConfigured } = useAuth();
   const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState('');
@@ -56,6 +56,27 @@ export default function Login() {
         boxShadow: 'var(--shadow-md)',
         padding: '2.25rem'
       }}>
+        {onBackToHome && (
+          <button
+            type="button"
+            onClick={onBackToHome}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--text-muted)',
+              fontSize: '0.8125rem',
+              fontWeight: '500',
+              cursor: 'pointer',
+              marginBottom: '1rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.25rem'
+            }}
+          >
+            &larr; Back to Home
+          </button>
+        )}
+
         {/* Brand Header */}
         <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
           <div style={{

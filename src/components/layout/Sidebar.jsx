@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   BookOpen,
   GraduationCap,
+  Home,
   X
 } from 'lucide-react';
 
@@ -26,6 +27,7 @@ export default function Sidebar({
     { id: 'transactions', label: 'Transactions', icon: History },
     { id: 'overdue', label: 'Overdue Records', icon: AlertTriangle, badge: 'Alert' },
     { id: 'student-portal', label: 'Student Portal', icon: GraduationCap },
+    { id: 'home', label: 'Public Home Page', icon: Home },
   ];
 
   return (

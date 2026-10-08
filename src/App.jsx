@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/layout/Layout';
 import Loader from './components/ui/Loader';
+import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Books from './pages/Books';
@@ -16,7 +17,7 @@ function MainApp() {
   const { isAuthenticated, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState(() => {
     const hash = window.location.hash.replace('#', '');
-    return hash || 'dashboard';
+    return hash || 'home';
   });
 
   useEffect(() => {
@@ -43,8 +44,49 @@ function MainApp() {
     );
   }
 
+  // When unauthenticated:
   if (!isAuthenticated) {
-    return <Login />;
+    if (currentPage === 'login') {
+      return <Login onBackToHome={() => handleNavigate('home')} />;
+    }
+    if (currentPage === 'student-portal') {
+      return (
+        <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', padding: '1rem' }}>
+          <StudentPortal
+            onSwitchToAdmin={() => handleNavigate('login')}
+            onBackToHome={() => handleNavigate('home')}
+          />
+        </div>
+      );
+    }
+    // Default unauthenticated view: The Landing Page!
+    return (
+      <LandingPage
+        onGoToAdmin={() => handleNavigate('login')}
+        onGoToStudent={() => handleNavigate('student-portal')}
+      />
+    );
+  }
+
+  // When authenticated, allow switching to Landing page or Student portal:
+  if (currentPage === 'home') {
+    return (
+      <LandingPage
+        onGoToAdmin={() => handleNavigate('dashboard')}
+        onGoToStudent={() => handleNavigate('student-portal')}
+      />
+    );
+  }
+
+  if (currentPage === 'student-portal') {
+    return (
+      <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', padding: '1rem' }}>
+        <StudentPortal
+          onSwitchToAdmin={() => handleNavigate('dashboard')}
+          onBackToHome={() => handleNavigate('home')}
+        />
+      </div>
+    );
   }
 
   const pageTitles = {
@@ -54,8 +96,7 @@ function MainApp() {
     'issue-book': 'Issue Book',
     returns: 'Book Returns & Fines',
     transactions: 'Transaction History',
-    overdue: 'Overdue Tracking',
-    'student-portal': 'Student & Patron Portal'
+    overdue: 'Overdue Tracking'
   };
 
   const renderPage = () => {
@@ -74,8 +115,6 @@ function MainApp() {
         return <Transactions />;
       case 'overdue':
         return <Overdue onNavigate={handleNavigate} />;
-      case 'student-portal':
-        return <StudentPortal onSwitchToAdmin={() => handleNavigate('dashboard')} />;
       default:
         return <Dashboard onNavigate={handleNavigate} />;
     }
