@@ -10,6 +10,7 @@ import IssueBook from './pages/IssueBook';
 import Returns from './pages/Returns';
 import Transactions from './pages/Transactions';
 import Overdue from './pages/Overdue';
+import StudentPortal from './pages/StudentPortal';
 
 function MainApp() {
   const { isAuthenticated, loading } = useAuth();
@@ -53,7 +54,8 @@ function MainApp() {
     'issue-book': 'Issue Book',
     returns: 'Book Returns & Fines',
     transactions: 'Transaction History',
-    overdue: 'Overdue Tracking'
+    overdue: 'Overdue Tracking',
+    'student-portal': 'Student & Patron Portal'
   };
 
   const renderPage = () => {
@@ -72,6 +74,8 @@ function MainApp() {
         return <Transactions />;
       case 'overdue':
         return <Overdue onNavigate={handleNavigate} />;
+      case 'student-portal':
+        return <StudentPortal onSwitchToAdmin={() => handleNavigate('dashboard')} />;
       default:
         return <Dashboard onNavigate={handleNavigate} />;
     }

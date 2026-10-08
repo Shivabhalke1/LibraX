@@ -26,7 +26,7 @@ export default function Navbar({
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         {/* User Info Badge */}
         <div style={{
           display: 'flex',

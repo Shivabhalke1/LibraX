@@ -7,6 +7,7 @@ import {
   History,
   AlertTriangle,
   BookOpen,
+  GraduationCap,
   X
 } from 'lucide-react';
 
@@ -24,6 +25,7 @@ export default function Sidebar({
     { id: 'returns', label: 'Returns', icon: RotateCcw },
     { id: 'transactions', label: 'Transactions', icon: History },
     { id: 'overdue', label: 'Overdue Records', icon: AlertTriangle, badge: 'Alert' },
+    { id: 'student-portal', label: 'Student Portal', icon: GraduationCap },
   ];
 
   return (
